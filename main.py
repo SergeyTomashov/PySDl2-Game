@@ -84,6 +84,10 @@ def run():
     bg = factory.from_color(GREY, size=(680, 680))
     bg_ = DrawLines(world, bg, 60, 60)
 
+    for line in maze_:
+        line1 = factory.from_color(WHITE, size=(line[2], line[3]))
+        line_ = DrawLines(world, line1, line[0], line[1])
+
     start_ = DrawLines(world, start, 70, 70)
     finish_ = DrawLines(world, finish, 673, 673)
     player = Entity(world, sp_paddle, 86, 86)
@@ -110,6 +114,7 @@ def run():
                     player.speed.vx = 0
         sdl2.SDL_Delay(10)
         world.process()
+    return 0
 
 
 if __name__ == "__main__":
