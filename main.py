@@ -10,37 +10,6 @@ GREEN = sdl2.ext.Color(0, 255, 0)
 BLACK = sdl2.ext.Color(0, 0, 0)
 
 
-class CheckColision():
-    def check(self, borders, item, type_):
-        left, top, right, bottom = item.sprite.area
-        f = False
-        if type_ == "w":
-            for each in borders:
-                if int(each[0]) <= int(left) <= int(each[2]) and int(each[0]) <= int(right) <= int(each[2]) and \
-    int(each[1]) < int(top) <= int(each[3]) and int(each[1]) <= int(bottom) <= int(each[3]):
-                    f = True
-                    break
-        elif type_ == "s":
-            for each in borders:
-                if int(each[0]) <= int(left) <= int(each[2]) and int(each[0]) <= int(right) <= int(each[2]) and \
-    int(each[1]) <= int(top) <= int(each[3]) and int(each[1]) <= int(bottom) < int(each[3]):
-                    f = True
-                    break
-        elif type_ == "a":
-            for each in borders:
-                if int(each[0]) < int(left) < int(each[2]) and int(each[0]) <= int(right) <= int(each[2]) and \
-    int(each[1]) <= int(top) <= int(each[3]) and int(each[1]) <= int(bottom) <= int(each[3]):
-                    f = True
-                    break
-        elif type_ == "d":
-            for each in borders:
-                if int(each[0]) <= int(left) <= int(each[2]) and int(each[0]) < int(right) < int(each[2]) and \
-    int(each[1]) <= int(top) <= int(each[3]) and int(each[1]) <= int(bottom) <= int(each[3]):
-                    f = True
-                    break
-        return f
-
-
 class MovementSystem(sdl2.ext.Applicator):
     def __init__(self, minx, miny, maxx, maxy):
         super(MovementSystem, self).__init__()
@@ -55,7 +24,6 @@ class MovementSystem(sdl2.ext.Applicator):
             swidth, sheight = sprite.size
             sprite.x += velocity.vx
             sprite.y += velocity.vy
-
             sprite.x = max(self.minx, sprite.x)
             sprite.y = max(self.miny, sprite.y)
 
@@ -116,63 +84,25 @@ def run():
     bg = factory.from_color(GREY, size=(680, 680))
     bg_ = DrawLines(world, bg, 60, 60)
 
-    sprites = [[] for i in range(58)]
-    i = 0
-    for line in maze_:
-        line1 = factory.from_color(WHITE, size=(line[2], line[3]))
-        line_ = DrawLines(world, line1, line[0], line[1])
-        for j in range(4):
-            sprites[i].append(int(line_.sprite.area[j]))
-        i += 1
-
     start_ = DrawLines(world, start, 70, 70)
     finish_ = DrawLines(world, finish, 673, 673)
     player = Entity(world, sp_paddle, 86, 86)
-
-    fleft, ftop, fright, fbottom = finish_.sprite.area
     running = True
     while running:
         events = sdl2.ext.get_events()
         for event in events:
-            left, top, right, bottom = player.sprite.area
             if event.type == sdl2.SDL_QUIT:
                 running = False
                 break
             if event.type == sdl2.SDL_KEYDOWN:
-                if int(left) >= int(fleft) and int(top) >= int(ftop):
-                    print('gay')
                 if event.key.keysym.sym == sdl2.SDLK_w:
-                    if CheckColision.check(player, sprites, player, "w"):
-                        player.speed.vy = -1
-                    else:
-                        player.speed.vy = 0
-                        player.speed.vx = 0
-                        top, left = player.sprite.area[1], player.sprite.area[0]
-                        player = Entity(world, sp_paddle, int(left), int(top) + 16)
+                    player.speed.vy = -1
                 if event.key.keysym.sym == sdl2.SDLK_s:
-                    if CheckColision.check(player, sprites, player, "s"):
-                        player.speed.vy = 1
-                    else:
-                        player.speed.vy = 0
-                        player.speed.vx = 0
-                        top, left = player.sprite.area[1], player.sprite.area[0]
-                        player = Entity(world, sp_paddle, int(left), int(top) - 16)
+                    player.speed.vy = 1
                 if event.key.keysym.sym == sdl2.SDLK_a:
-                    if CheckColision.check(player, sprites, player, "a"):
-                        player.speed.vx = -1
-                    else:
-                        player.speed.vx = 0
-                        player.speed.vy = 0
-                        bottom, left = player.sprite.area[1], player.sprite.area[0]
-                        player = Entity(world, sp_paddle, int(left) + 16, int(bottom))
+                    player.speed.vx = -1
                 if event.key.keysym.sym == sdl2.SDLK_d:
-                    if CheckColision.check(player, sprites, player, "d"):
-                        player.speed.vx = 1
-                    else:
-                        player.speed.vx = 0
-                        player.speed.vy = 0
-                        bottom, right = player.sprite.area[1], player.sprite.area[2]
-                        player = Entity(world, sp_paddle, int(right) - 45, int(bottom))
+                    player.speed.vx = 1
             else:
                 if event.key.keysym.sym in (sdl2.SDLK_w, sdl2.SDLK_s):
                     player.speed.vy = 0
